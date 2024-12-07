@@ -6,3 +6,4 @@
 - Creación del readme.
 - configuración del entorno Java y Spring.
 - Cración del diagrama base de datos (la clase principal).
+- Creación de la base de datos y tabla en MySQL.
