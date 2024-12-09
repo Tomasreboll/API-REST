@@ -1,6 +1,6 @@
-package domain.topico;
+package com.apirest.challenge.domain.topico;
 
-public enum Cursos {
+public enum Curso {
 
     JAVA,
     JAVASCRIPT,
