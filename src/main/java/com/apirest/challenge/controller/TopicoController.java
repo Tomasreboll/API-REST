@@ -1,20 +1,26 @@
 package com.apirest.challenge.controller;
 
 
+import com.apirest.challenge.domain.topico.Curso;
+import com.apirest.challenge.domain.topico.FiltroTopico;
 import com.apirest.challenge.domain.topico.Topico;
+import com.apirest.challenge.domain.topico.records.DatosListaTopicos;
 import com.apirest.challenge.domain.topico.records.DatosResgistroTopico;
 import com.apirest.challenge.domain.topico.records.DatosRespuestaTopico;
 import com.apirest.challenge.repository.TopicosRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/topicos")
@@ -23,6 +29,7 @@ public class TopicoController {
     @Autowired
     private TopicosRepository topicosRepository;
 
+    // Metodo para registrar topicos
     @PostMapping
     public ResponseEntity<DatosRespuestaTopico> registrarTopico (@RequestBody @Valid DatosResgistroTopico dtotopicos, UriComponentsBuilder uriComponentsBuilder) {
 
@@ -31,6 +38,44 @@ public class TopicoController {
                 topico.getAutor(), topico.getCurso());
         URI url = uriComponentsBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
         return ResponseEntity.created(url).body(datosRespuestaTopico);
+    }
+
+    // Metodo para listar los primeros 10 topicos existentes por fecha ASC:
+    @GetMapping("/first10")
+    public ResponseEntity<Page<DatosListaTopicos>> listarFirst10Topicos(@PageableDefault(size = 10) Pageable paginacion) {
+        List<Topico> topicos = topicosRepository.findFirst10TopicsOrderedByCreationDate();
+        Page<Topico> page = new PageImpl<>(topicos, paginacion, topicos.size());
+        return ResponseEntity.ok(page.map(DatosListaTopicos::new));
+    }
+
+    // Metodo para listar todos los topicos existentes con paginacion 3:
+    @GetMapping
+    public ResponseEntity<Page<DatosListaTopicos>> listarTopicos(@PageableDefault(size = 3) Pageable paginacion) {
+        return ResponseEntity.ok(topicosRepository.findAll(paginacion).map(DatosListaTopicos::new));
+    }
+
+    // Metodo para que el listado sea mediante una busqueda personalizada:
+    @GetMapping("/busqueda")
+    public ResponseEntity<List<DatosListaTopicos>> listaPorBusqueda(@RequestBody FiltroTopico filtro) {
+        LocalDateTime fecha = null;
+        if (filtro.getAnio() != null){
+            fecha = LocalDateTime.of(filtro.getAnio(), 1,1,0,0,0,0);
+        }
+
+        Curso cursoEnum = null;
+        if (filtro.getCurso() != null) {
+            try {
+                cursoEnum = Curso.valueOf(filtro.getCurso().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(null);
+            }
+        }
+        List<Topico> topicos = topicosRepository.findByYearAndCurso(fecha,cursoEnum);
+
+        List<DatosListaTopicos> datos = topicos.stream()
+                .map(DatosListaTopicos::new).toList();
+
+        return ResponseEntity.ok(datos);
     }
 
 }

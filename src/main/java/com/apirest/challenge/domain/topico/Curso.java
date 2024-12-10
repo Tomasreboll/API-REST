@@ -7,5 +7,6 @@ public enum Curso {
     PYTHON,
     RUBY,
     PHP,
-    TYPESCRIPT
+    TYPESCRIPT,
+    OTROS
 }
