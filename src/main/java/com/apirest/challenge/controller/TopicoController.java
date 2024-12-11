@@ -1,12 +1,14 @@
 package com.apirest.challenge.controller;
 
 
+import com.apirest.challenge.domain.topico.errores.TopicoError;
 import com.apirest.challenge.domain.topico.Curso;
 import com.apirest.challenge.domain.topico.FiltroTopico;
 import com.apirest.challenge.domain.topico.Topico;
 import com.apirest.challenge.domain.topico.records.DatosListaTopicos;
 import com.apirest.challenge.domain.topico.records.DatosResgistroTopico;
 import com.apirest.challenge.domain.topico.records.DatosRespuestaTopico;
+import com.apirest.challenge.domain.topico.records.DatosRespuestaTopicoId;
 import com.apirest.challenge.repository.TopicosRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -21,6 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/topicos")
@@ -61,7 +65,6 @@ public class TopicoController {
         if (filtro.getAnio() != null){
             fecha = LocalDateTime.of(filtro.getAnio(), 1,1,0,0,0,0);
         }
-
         Curso cursoEnum = null;
         if (filtro.getCurso() != null) {
             try {
@@ -71,11 +74,25 @@ public class TopicoController {
             }
         }
         List<Topico> topicos = topicosRepository.findByYearAndCurso(fecha,cursoEnum);
-
         List<DatosListaTopicos> datos = topicos.stream()
                 .map(DatosListaTopicos::new).toList();
-
         return ResponseEntity.ok(datos);
+    }
+
+    // Para obeter un topico por el id:
+    @GetMapping("/{id}")
+    public ResponseEntity <Object> listarPorId(@PathVariable Long id) {
+        Optional<Topico> optionalTopico = topicosRepository.findById(id);
+        if (optionalTopico.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new TopicoError("La ID buscada no existe", id));
+        }
+
+//        Topico t = topicosRepository.getReferenceById(id);
+        Topico t = optionalTopico.get();
+        var datosPorId = new DatosRespuestaTopicoId(t.getTitulo(), t.getMensaje(), t.getAutor(),
+                t.getFehaDeCreacion(), t.isStatus(), t.getCurso());
+        return ResponseEntity.ok(datosPorId);
     }
 
 }
