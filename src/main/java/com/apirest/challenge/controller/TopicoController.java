@@ -5,11 +5,9 @@ import com.apirest.challenge.domain.topico.errores.TopicoError;
 import com.apirest.challenge.domain.topico.Curso;
 import com.apirest.challenge.domain.topico.FiltroTopico;
 import com.apirest.challenge.domain.topico.Topico;
-import com.apirest.challenge.domain.topico.records.DatosListaTopicos;
-import com.apirest.challenge.domain.topico.records.DatosResgistroTopico;
-import com.apirest.challenge.domain.topico.records.DatosRespuestaTopico;
-import com.apirest.challenge.domain.topico.records.DatosRespuestaTopicoId;
+import com.apirest.challenge.domain.topico.records.*;
 import com.apirest.challenge.repository.TopicosRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -87,12 +85,27 @@ public class TopicoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new TopicoError("La ID buscada no existe", id));
         }
-
-//        Topico t = topicosRepository.getReferenceById(id);
         Topico t = optionalTopico.get();
         var datosPorId = new DatosRespuestaTopicoId(t.getTitulo(), t.getMensaje(), t.getAutor(),
                 t.getFehaDeCreacion(), t.isStatus(), t.getCurso());
         return ResponseEntity.ok(datosPorId);
+    }
+
+    // Para actulizar un topico
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity actulizarTopico(@RequestBody @Valid DatosActulizaTopico datos, @PathVariable Long id) {
+        Optional<Topico> optionalTopico = topicosRepository.findById(id);
+        if (optionalTopico.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new TopicoError("La ID buscada no existe", id));
+        }
+
+        Topico topico = optionalTopico.get();
+        topico.actulizarTopico(datos);
+        return ResponseEntity.ok(new DatosActulizaTopico(topico.getTitulo(), topico.getMensaje(),
+                topico.getAutor(), topico.getCurso(), topico.getFehaDeCreacion()));
+
     }
 
 }

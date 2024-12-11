@@ -1,6 +1,7 @@
 package com.apirest.challenge.domain.topico;
 
 
+import com.apirest.challenge.domain.topico.records.DatosActulizaTopico;
 import com.apirest.challenge.domain.topico.records.DatosResgistroTopico;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -68,6 +69,22 @@ public class Topico {
         this.status = true;
         this.autor = dtoTopicos.autor();
         this.curso = dtoTopicos.curso();
+    }
 
+    public void actulizarTopico(DatosActulizaTopico dtoTopicos) {
+        if (dtoTopicos.titulo() != null)
+            this.titulo = dtoTopicos.titulo();
+
+        if (dtoTopicos.autor() != null)
+            this.autor = dtoTopicos.autor();
+
+        if (dtoTopicos.mensaje() != null)
+            this.mensaje = dtoTopicos.mensaje();
+
+        if (dtoTopicos.curso() != null)
+            this.curso = dtoTopicos.curso();
+
+        if (dtoTopicos.fecha() != null)
+            this.fecha = LocalDateTime.now();
     }
 }
