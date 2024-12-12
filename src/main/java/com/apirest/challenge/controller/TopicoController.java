@@ -80,6 +80,7 @@ public class TopicoController {
     // Para obeter un topico por el id:
     @GetMapping("/{id}")
     public ResponseEntity <Object> listarPorId(@PathVariable Long id) {
+        // Esto lo que hace es verificar que la id ingresada en la url exista en caso contrario muestra el mensaje junto con la id ingresada.
         Optional<Topico> optionalTopico = topicosRepository.findById(id);
         if (optionalTopico.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -106,6 +107,22 @@ public class TopicoController {
         return ResponseEntity.ok(new DatosActulizaTopico(topico.getTitulo(), topico.getMensaje(),
                 topico.getAutor(), topico.getCurso(), topico.getFehaDeCreacion()));
 
+    }
+
+    // Para eliminar un topico
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity elimiarTopico(@PathVariable Long id) {
+        Optional<Topico> optionalTopico = topicosRepository.findById(id);
+        if (optionalTopico.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new TopicoError("La ID buscada no existe", id));
+        }
+
+        Topico topico = optionalTopico.get();
+        topicosRepository.delete(topico);
+        return ResponseEntity.ok().body("Topico eliminado con exito :D");
     }
 
 }
