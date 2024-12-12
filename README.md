@@ -18,5 +18,7 @@
 - Detallando un topico terminado donde:
   - A la funcion para busqueda por id si ese id no exite arroja un mensaje personalizado y de lo contrario muestra el topico con todo lo solicitado.
 #### 
-- Creacion del metodo para actualizar topico tomadno en cuenta la especificacion del trello.
+- Creación del metodo para actualizar topico tomadno en cuenta la especificacion del trello.
   - Al metodo para poder actulizar un topico funciona igual que a "detallando un topico" donde en el caso de que la id no exista envia un mensaje personalizao y dicha id se debe de agregar a la Url como lo especifica el trello, ej: .../topicos/{id}
+####
+- Creación del metodo para realizar la eliminación de un topico.
