@@ -22,3 +22,6 @@
   - Al metodo para poder actulizar un topico funciona igual que a "detallando un topico" donde en el caso de que la id no exista envia un mensaje personalizao y dicha id se debe de agregar a la Url como lo especifica el trello, ej: .../topicos/{id}
 ####
 - Creación del metodo para realizar la eliminación de un topico.
+- Creación del metodo para la autenticación con Spring security.
+- Creación del metodo para la creación del TOKEN.
+- Creación del metodo para la autenticacion con JWT.
