@@ -25,3 +25,8 @@
 - Creación del metodo para la autenticación con Spring security.
 - Creación del metodo para la creación del TOKEN.
 - Creación del metodo para la autenticacion con JWT.
+
+--------
+### Extras agregados al Foro Hub:
+
+- Metodo para poder comentar topicos interactuando por la id de manera dinamica desde la misma url. 
