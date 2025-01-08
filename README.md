@@ -29,4 +29,5 @@
 --------
 ### Extras agregados al Foro Hub:
 
-- Metodo para poder comentar topicos interactuando por la id de manera dinamica desde la misma url. 
+- Metodo para poder comentar topicos interactuando por la id de manera dinamica desde la misma url.
+- Metodo para poder listar los comentarios por topico. (mostrar todos los comentarios que este tenga en la url: localhost......comentario/todos/{topicoId})
