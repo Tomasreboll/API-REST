@@ -2,15 +2,13 @@ package com.apirest.challenge.domain.comentarios.record;
 
 import com.apirest.challenge.domain.topico.Curso;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
-public record DatosRespuestaComentario(
+public record DatosListaComentarios(
         String titulo,
         String mensaje,
         Curso curso,
-        DatosMuestraComentario comentario
+        List<DatosMuestraComentario> comentario
 
 ) {
 }
-
-
